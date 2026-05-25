@@ -1,0 +1,1963 @@
+{
+  "name": "stock AI agent",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1024,
+        -784
+      ],
+      "id": "7c3c4c1f-b97c-4541-b994-e65f8b8328d4",
+      "name": "Telegram Trigger",
+      "webhookId": "da600aa7-7e51-45c0-9ecf-f808a48f61b6",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f59e7595-8bb2-49c3-af29-419d00d0418c",
+              "name": "message.text",
+              "value": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "c435f9de-bf83-4fb0-8b8d-0aafe32139d5",
+              "name": "message.chat.id",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "bd8654bb-07c7-400a-ba32-db784cf814de",
+              "name": "source ",
+              "value": "telegram",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        -976
+      ],
+      "id": "95ea45e1-7e52-4fd6-b3ef-ec5dc5b2e6b1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an intelligent AI financial and productivity assistant.\n\nCapabilities:\n\n* Answer user questions\n* Analyze stock and crypto market data\n* Summarize financial news\n* Assist with productivity tasks\n* Provide concise analytical insights\n* Use connected tools for real-time information\n\nGeneral Rules:\n\n* Always keep responses concise, professional, and accurate\n* Maintain conversational memory naturally\n* Use tools whenever real-time data is required\n* Never hallucinate prices, indicators, news, or market data\n* Never generate fake API calls, URLs, or unsupported information\n* Return responses in clean plain text only\n* No Markdown\n* No HTML\n* No code blocks\n* No tables\n* No raw JSON\n* No emojis unless explicitly requested\n* No special formatting characters such as *, #, _, [], (), or backticks\n* Telegram-safe output only\n\nResponse Formatting Rules:\n\n* Return output in simple readable bullet-point text format\n* Keep news summaries within 100–125 words maximum\n* Return only the latest and most relevant news\n* Avoid overly long explanations\n* Never include links in Telegram responses\n\nStock and Crypto Rules:\n\n* For stock prices, market movement, quotes, company performance, and crypto prices:\n  always use the Alpha Vantage tool\n\n* For technical indicators including:\n  RSI\n  MACD\n  EMA\n  SMA\n  Bollinger Bands\n  VWAP\n  ATR\n  ADX\n  Stochastic RSI\n\n  always use the Twelve Data tool\n\n* Never estimate or hallucinate indicator values\n\n* Never explain indicators without fetching real API data first\n\n* Only answer using exact API responses\n\n* If API returns no data, clearly say:\n  \"No data was returned from the API.\"\n\nTicker Mapping Rules:\n\n* Tesla → TSLA\n* Apple → AAPL\n* NVIDIA → NVDA\n* Microsoft → MSFT\n* Bitcoin → BTC/USD\n* Ethereum → ETH/USD\n* Reliance → NSE:RELIANCE\n* TCS → NSE:TCS\n stick to the nse market format\n\n\nIRCTC:NSE i dont need like lthis \n\nStrict Tool Rules:\n\n* Never mention premium plans or subscription limitations unless explicitly returned by the API\n* Never invent provider restrictions\n* Never assume missing data\n* If API returns an error:\n  return the exact error message only\n* Always prioritize tool execution before generating responses\n* Always use real API values in final answers\n\nNews Rules:\n\n* Summarize only the newest and most relevant news\n* Keep responses short and readable\n* Focus on factual market impact\n* Avoid unnecessary commentary\n\nTone:\n\n* Professional\n* Analytical\n* Concise\n* Human-like\n* Direct and informative\n\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1152,
+        -592
+      ],
+      "id": "bd0cddab-55d5-432b-aaff-e0f518cff33c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -784
+      ],
+      "id": "883b9de6-8f17-4242-b6c1-6f1769b6d3c4",
+      "name": "Get a file",
+      "webhookId": "2293e4f5-1cf5-426c-aa4c-acf15d942ce9",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        -784
+      ],
+      "id": "40b6fe42-0ee8-449d-992b-eac64295f672",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cVzUXwiVGb56DNsl",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c37793d3-cc97-49f7-b849-6f46876e1528",
+              "name": "message.text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "7297c2b3-31f4-4e4d-951e-247c9c376ea9",
+              "name": "message.chat.id",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        -784
+      ],
+      "id": "882472cf-0cdc-4e93-9808-5c20dc59b05c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1072,
+        -304
+      ],
+      "id": "2fde9715-23b7-426c-8ed5-a01f18422827",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        -304
+      ],
+      "id": "c6410330-8e1c-48cb-b72e-710935736210",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QzPRJBSbRSmpxuhH",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to fetch real-time news articles about stocks, crypto, companies, finance, and world events.\n\nInput:\n\n* company name\n* stock name\n* crypto name\n* topic\n\nExamples:\n\n* Tesla\n* Bitcoin\n* NVIDIA\n* AI news\n\nThe tool returns the latest news articles and headlines.\n\nAlways use this tool whenever the user asks for:\n\n* news\n* latest updates\n* headlines\n* market events\n* stock news\n* crypto news\nreturn only the latest news to fit in the chat model guidlines  only 100-125 words at once ",
+        "url": "https://newsapi.org/v2/everything",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `this value is to decided with the help to text that recived `, 'string') }}"
+            },
+            {
+              "name": "apiKey",
+              "value": "12f47bfb5d79466fa5f0b58cbad9a718"
+            },
+            {
+              "name": "language",
+              "value": "en"
+            },
+            {
+              "name": "sortBy",
+              "value": "publishedAt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        1184,
+        -128
+      ],
+      "id": "2db8e9e6-dee5-4255-8dbe-02e3b84c8a61",
+      "name": "news"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "whats in this image ",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        -592
+      ],
+      "id": "027a350c-fa41-409b-a8ca-e35398fb065f",
+      "name": "Analyze an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "JbiczohMOZUFKw87",
+          "name": "Google Gemini(PaLM) Api account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[0].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -576,
+        -496
+      ],
+      "id": "44cf7902-1e48-4ed4-ab1a-2fbc0f535016",
+      "name": "Get a file1",
+      "webhookId": "a33fd255-a38a-49c5-8c68-6c85752f320b",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b78a799f-5e5f-4018-8224-b24c72501973",
+              "name": "message.text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "4d22d085-9363-4a44-b148-61daeab4c4f9",
+              "name": "message.chat.id",
+              "value": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        -592
+      ],
+      "id": "98eddd4a-e851-4d4a-9fa9-3ddecfa6df95",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stockagent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        -208
+      ],
+      "id": "8b6c12ed-2dba-4efa-9f29-1a979ef5069a",
+      "name": "Webhook",
+      "webhookId": "0409f34b-6a35-4a8b-b47a-d4a9d6d4d300"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2096,
+        -592
+      ],
+      "id": "6e61328a-1552-4aab-b080-1340e55406f4",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f24d1a8-3f18-4dd6-93f2-30a6bd2d2d49",
+              "name": "message.text",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "b634e3b2-aaf7-4a2e-bce5-334d0c936e14",
+              "name": "message.chat.id",
+              "value": "={{ $json.body.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9f6cad4f-d5d4-4276-b35b-a894c965cd95",
+              "name": "source",
+              "value": "webhook",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        -208
+      ],
+      "id": "b9a129ff-eb4e-427f-bd0c-4b43a2ddc079",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6bc00d90-3750-4037-b050-f28a84389a10",
+              "leftValue": "={{ $json.headers !== undefined }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1872,
+        -592
+      ],
+      "id": "7f140265-3ccc-4b75-8dc6-a069e7e86c92",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6bc00d90-3750-4037-b050-f28a84389a10",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1872,
+        -400
+      ],
+      "id": "7aead9c4-ca11-4a5a-8055-88d896743229",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.content.parts[0].text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        -400
+      ],
+      "id": "3cbeef51-3833-4485-a795-ee01ec7bea50",
+      "name": "Send a text message1",
+      "webhookId": "e33df02c-ede3-440f-bfdd-782fd3bb03a9",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "You are a strict image classifier.\n\nYour task is to detect whether the image ACTUALLY contains a visible financial chart.\n\nA trading_chart image MUST contain at least one of these:\n\n* candlestick chart\n* line chart\n* price graph\n* trading indicators\n* RSI/MACD\n* chart axes\n* chart grid\n* trading interface with visible graph\n\nDO NOT classify as trading_chart if the image ONLY contains:\n\n* stock names\n* ticker symbols\n* company names\n* plain text\n* watchlists\n* news\n* screenshots without charts\n\nReturn ONLY one of these:\n\n* trading_chart\n* normal_image\n\nExamples:\n\n* Candlestick chart → trading_chart\n* TradingView graph → trading_chart\n* Binance chart → trading_chart\n* Screenshot saying \"Apple (AAPL)\" → normal_image\n* Stock watchlist without graph → normal_image\n\nDo not explain.\nReturn only the category name.\n",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -496
+      ],
+      "id": "1a38b02a-06ec-458e-b678-7afded9383d8",
+      "name": "Analyze an image1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QzPRJBSbRSmpxuhH",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "213952ea-1f62-4a39-9cef-fbf2979b3ae8",
+              "leftValue": "={{ $json.content.parts[0].text }}",
+              "rightValue": "normal_image",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        -496
+      ],
+      "id": "e872ef2a-e9c8-4361-b96d-b8ba46e05226",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Get a file1').item.json.result.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -400
+      ],
+      "id": "3df984b1-3941-4296-97fc-557523c3b023",
+      "name": "Get a file2",
+      "webhookId": "56c2b89f-bedb-4372-8bf6-ac8dde30c388",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Get a file1').item.json.result.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        -592
+      ],
+      "id": "0efcd1a1-bbfa-4adf-9b90-8bb30233f702",
+      "name": "Get a file3",
+      "webhookId": "272746d8-9a2a-49ac-ae58-748c092cf178",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "You are an expert technical analyst.\nYou are an elite institutional technical analyst.\n\nAnalyze the uploaded trading chart image like a professional trader.\n\nRules:\n\n* Do NOT ask for ticker names.\n* Do NOT say \"I cannot identify\".\n* Use only visible chart data.\n* Keep response concise and trader-focused.\n\nProvide:\n\n1. Market trend\n2. Momentum strength\n3. Support & resistance\n4. Breakout or reversal probability\n5. Entry zone\n6. Stop loss zone\n7. Short-term outlook\n\nIf confidence is low, say \"setup is unclear currently\".\n\nOutput style:\n\n* Professional\n* Clean\n* No markdown\n* No bullet spam\n* Max 150 words\n\n",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        -400
+      ],
+      "id": "7c2181ce-492a-4e65-ab2b-3249fa185d50",
+      "name": "Analyze an image2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "JbiczohMOZUFKw87",
+          "name": "Google Gemini(PaLM) Api account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo",
+          "mode": "list",
+          "cachedResultName": "watchlist stocks",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Stock Name ": "={{ $json.stock_name }}",
+            "Current price ": "={{ $json.current_price }}",
+            "Change ": "={{ $json.change }}",
+            "Volume": "={{ $json.volume }}",
+            "Last trading day": "={{ $json.last_trading_day }}"
+          },
+          "matchingColumns": [
+            "Stock Name "
+          ],
+          "schema": [
+            {
+              "id": "Stock Name ",
+              "displayName": "Stock Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Current price ",
+              "displayName": "Current price ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Change ",
+              "displayName": "Change ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Volume",
+              "displayName": "Volume",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last trading day",
+              "displayName": "Last trading day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2320,
+        -784
+      ],
+      "id": "a8682572-e1be-437e-86ce-e2772f3b3443",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "D124lU0L9e7pSmm6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cea75829-0dbd-427e-8dc1-a4b87e928948",
+              "name": "stock_name",
+              "value": "={{ $json.output.match(/^([A-Z]+)/)?.[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "59317b44-588b-465e-bbb5-5eb98083bd34",
+              "name": "current_price",
+              "value": "={{ $json.output.match(/Current price:\\s*([0-9.]+)/)?.[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "f807f317-57fb-4a83-888e-0522757d0e4b",
+              "name": "change",
+              "value": "={{ $json.output.match(/Change:\\s*([+\\-0-9.%]+)/)?.[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "0625416d-22ac-40b2-8bea-4608ecdf5525",
+              "name": "volume",
+              "value": "={{ $json.output.match(/Volume:\\s*([\\d,]+)/)?.[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "e910b9b0-c9fd-4852-a100-eae55238e47b",
+              "name": "last_trading_day",
+              "value": "={{ $json.output.match(/Latest trading day:\\s*([\\d-]+)/)?.[1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2096,
+        -784
+      ],
+      "id": "c3c21545-003d-4f40-944a-35c07be1fa8f",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "269c031c-1a8a-4f34-ac19-90ded9a505a4",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "rightValue": "Watch",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c3443ceb-0efd-494c-bb5c-301a2972da2e",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "rightValue": "watch",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1872,
+        -976
+      ],
+      "id": "daa2aa18-27aa-400f-a730-4e8bded81463",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo",
+          "mode": "list",
+          "cachedResultName": "watchlist stocks",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Stock Name ",
+              "lookupValue": "={{ $json['Stock Name '] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -608,
+        -1984
+      ],
+      "id": "96a3a286-a749-4c58-9cc1-7f67935bdf25",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "D124lU0L9e7pSmm6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "03a3cb73-ff59-43df-9f30-3d7a468cef40",
+              "name": "Stock Name ",
+              "value": "={{ $json['Stock Name '] }}",
+              "type": "string"
+            },
+            {
+              "id": "2fe736e7-0f6c-4160-8896-db5fe7aea97c",
+              "name": "Current price ",
+              "value": "={{ $json['Current price '] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -160,
+        -2128
+      ],
+      "id": "51dfff70-8c58-4f8a-8330-e673fb077b73",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -384,
+        -1984
+      ],
+      "id": "4d14fc41-02c0-4ea7-9012-1306807c2e3e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -1936
+      ],
+      "id": "20ec6187-2a87-43b1-ac14-04373014114d",
+      "placeholder": true
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 8
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo",
+          "mode": "list",
+          "cachedResultName": "watchlist stocks",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uuTFT2sHMW-DmcHDq-qrJZfd6enuGd-pbLHbX7eCbHo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -1984
+      ],
+      "id": "0dfd9b06-a451-4e8d-ba11-626a952e7ce8",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "CEBwA3d6ze0b9cxb",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fetches real-time stock market data using Alpha Vantage.\n\nUse this tool whenever the user asks about:\n\n* stock prices\n* company stocks\n* market performance\n* trading data\n* stock movement\n\nInput:\n\n* stock ticker symbol only\n\nExamples:\n\n* TSLA\n* AAPL\n* NVDA\n* MSFT\n* GOOGL\n\nReturns:\n\n* latest stock price\n* price changes\n* percentage movement\n* trading volume\n\n",
+        "url": "https://www.alphavantage.co/query",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "function",
+              "value": "GLOBAL_QUOTE"
+            },
+            {
+              "name": "symbol",
+              "value": "={{ $json['Stock Name '] }}"
+            },
+            {
+              "name": "apikey",
+              "value": "YX5Z4TXYQV0TABAM"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        320,
+        -1904
+      ],
+      "id": "fd9ac6b2-115b-4e27-a4ef-3007148e2766",
+      "name": "global quote1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $workflow.id }}",
+        "text": "={{ $json.content.parts[0].text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        -2128
+      ],
+      "id": "a211e781-55eb-46b5-a453-1c5929907df0",
+      "name": "Send a text message3",
+      "webhookId": "3520b8a4-33ef-4562-8caa-de7978a5b32b",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Stock Name '] }} name ,\n{{ $json['Current price '] }} old prize",
+        "options": {
+          "systemMessage": "yopu are a agent whose work is to compare the prise of the name of stock given by usimg the tool and to create amn alert signal if the stock prise is same changed and others "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        128,
+        -2128
+      ],
+      "id": "f0fa7ee3-fa7d-408c-9424-8d50372f6420",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $workflow.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        192,
+        -1904
+      ],
+      "id": "62a17b4d-5694-426e-9312-7d3981e3e376",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        64,
+        -1904
+      ],
+      "id": "d01d1449-698d-418d-9772-0f6087be8660",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QzPRJBSbRSmpxuhH",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://client.camb.ai/apis/tts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "a4d98d16-e9b5-4e61-a8c1-267e609ac538"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "voice_id",
+              "value": "147320"
+            },
+            {
+              "name": "language",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2096,
+        -208
+      ],
+      "id": "796b97f4-1bd2-48b9-a4c8-7aaf6131235f",
+      "name": "CAMBAI REQ1"
+    },
+    {
+      "parameters": {
+        "url": "=https://client.camb.ai/apis/tts/{{ $json.task_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "a4d98d16-e9b5-4e61-a8c1-267e609ac538"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2320,
+        -208
+      ],
+      "id": "8c9a12ae-15c5-4210-9e3e-e417dc41756a",
+      "name": "CAMBAI REQ2",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "=https://client.camb.ai/apis/tts-result/{{ $json.run_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "a4d98d16-e9b5-4e61-a8c1-267e609ac538"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2544,
+        -208
+      ],
+      "id": "95fb2c7c-4190-42ee-9f3f-a457fd68be0b",
+      "name": "CAMBAI REQ3"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Technical Indicator Tool.\n\nUse this tool ONLY when users ask:\n\n* MACD\n* RSI\n* EMA\n* SMA\n* indicators\n* technical analysis\n\nThis tool returns REAL indicator values.\n\nMandatory input:\n\n* stock symbol\n\nExamples:\n\n* RELIANCE.BSE\n* TSLA\n* NVDA\n\n\n",
+        "url": "https://www.alphavantage.co/query",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "symbol",
+              "value": "={{ $fromAI(\"symbol\") }}"
+            },
+            {
+              "name": "apikey",
+              "value": "YX5Z4TXYQV0TABAM"
+            },
+            {
+              "name": "function",
+              "value": "MACD"
+            },
+            {
+              "name": "series_type",
+              "value": "close"
+            },
+            {
+              "name": "interval",
+              "value": "daily"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        1312,
+        -128
+      ],
+      "id": "a5f8cbfe-aec7-45c4-9461-0819913c0511",
+      "name": "Alpha Vantange technical api"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fetches real-time stock market data using Alpha Vantage.\n\nUse this tool whenever the user asks about:\n\n* stock prices\n* company stocks\n* market performance\n* trading data\n* stock movement\n\nInput:\n\n* stock ticker symbol only\n\nExamples:\n\n* TSLA\n* AAPL\n* NVDA\n* MSFT\n* GOOGL\n\nReturns:\n\n* latest stock price\n* price changes\n* percentage movement\n* trading volume\n\n",
+        "url": "https://www.alphavantage.co/query",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "function",
+              "value": "GLOBAL_QUOTE"
+            },
+            {
+              "name": "symbol",
+              "value": "={{ $fromAI(\"symbol\") }}"
+            },
+            {
+              "name": "apikey",
+              "value": "YX5Z4TXYQV0TABAM"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        1456,
+        -128
+      ],
+      "id": "849fd4c2-7b7a-44dd-a311-7373f165956b",
+      "name": "Alpha Vantage global api"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to fetch real-time and historical financial market data using the Twelve Data API.\n\nCapabilities:\n- Real-time stock prices for US and Indian markets\n- NSE/BSE stock data support\n- Forex and cryptocurrency market data\n- Technical indicators including RSI, MACD, SMA, EMA, Bollinger Bands, ATR, VWAP, ADX, and more\n- Historical OHLCV candle data\n- Intraday and daily time-series analysis\n- Trend and momentum analysis\n- Batch stock requests and market summaries\n\nInstructions:\n- Use this tool whenever the user asks about stock prices, technical indicators, market trends, trading analysis, forex, ETFs, or cryptocurrency data.\n- Extract the stock symbol intelligently from the user query.\n- For Indian stocks use symbols like RELIANCE, TCS, INFY, HDFCBANK, etc.\n- Return only actual values from the API response.\n- Never hallucinate or invent technical indicator values.\n- If no data is returned, clearly mention that the API returned no data.\n- Keep responses concise, analytical, and trading-focused.\n- When indicators are available, explain whether they indicate bullish, bearish, overbought, oversold, or neutral momentum.\n\nExamples:\nUser: \"RSI of TSLA\"\n→ Fetch RSI indicator for TSLA\n\nUser: \"MACD for RELIANCE\"\n→ Fetch MACD data for RELIANCE\n\nUser: \"Current price of BTC/USD\"\n→ Fetch latest cryptocurrency market data\n\nUser: \"EMA 50 for AAPL\"\n→ Fetch EMA technical indicator for AAPL\n\nUser: \"USDINR price\"\n→ Fetch forex exchange rate data",
+        "operation": "currencyConversion",
+        "fromSymbol": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('From_Symbol', ``, 'string') }}",
+        "toSymbol": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Symbol', ``, 'string') }}",
+        "amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Amount', ``, 'number') }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-twelve-data.twelveDataTool",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        -128
+      ],
+      "id": "8b690b77-fb54-4cbf-bd86-3d1eb61886b1",
+      "name": "Convert currency  Twelve Data",
+      "credentials": {
+        "twelveDataApi": {
+          "id": "3eR2uqy3ixoMoQRN",
+          "name": "Twelve Data account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to fetch real-time and historical financial market data using the Twelve Data API.\n\nCapabilities:\n- Real-time stock prices for US and Indian markets\n- NSE/BSE stock data support\n- Forex and cryptocurrency market data\n- Technical indicators including RSI, MACD, SMA, EMA, Bollinger Bands, ATR, VWAP, ADX, and more\n- Historical OHLCV candle data\n- Intraday and daily time-series analysis\n- Trend and momentum analysis\n- Batch stock requests and market summaries\n\nInstructions:\n- Use this tool whenever the user asks about stock prices, technical indicators, market trends, trading analysis, forex, ETFs, or cryptocurrency data.\n- Extract the stock symbol intelligently from the user query.\n- For Indian stocks use symbols like RELIANCE, TCS, INFY, HDFCBANK, etc.\n- Return only actual values from the API response.\n- Never hallucinate or invent technical indicator values.\n- If no data is returned, clearly mention that the API returned no data.\n- Keep responses concise, analytical, and trading-focused.\n- When indicators are available, explain whether they indicate bullish, bearish, overbought, oversold, or neutral momentum.\n\nExamples:\nUser: \"RSI of TSLA\"\n→ Fetch RSI indicator for TSLA\n\nUser: \"MACD for RELIANCE\"\n→ Fetch MACD data for RELIANCE\n\nUser: \"Current price of BTC/USD\"\n→ Fetch latest cryptocurrency market data\n\nUser: \"EMA 50 for AAPL\"\n→ Fetch EMA technical indicator for AAPL\n\nUser: \"USDINR price\"\n→ Fetch forex exchange rate data",
+        "operation": "getMarketMoversAll",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-twelve-data.twelveDataTool",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -128
+      ],
+      "id": "ccf8cb4e-8a88-44f7-af51-08fb7315da33",
+      "name": "Get market movers  Twelve Data",
+      "credentials": {
+        "twelveDataApi": {
+          "id": "3eR2uqy3ixoMoQRN",
+          "name": "Twelve Data account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to fetch real-time cryptocurrency market data and technical indicators using EODHD APIs.\n\nCapabilities:\n\n* Real-time crypto prices\n* Technical indicators including RSI, MACD, SMA, EMA, Bollinger Bands, ATR, and more\n* Historical crypto candle data\n* Market trend and momentum analysis\n* Intraday and end-of-day crypto data\n\nSupported Examples:\n\n* BTC-USD.CC\n* ETH-USD.CC\n* SOL-USD.CC\n* XRP-USD.CC\n* DOGE-USD.CC\n\nInstructions:\n\n* Use this tool whenever the user asks about:\n\n  * crypto prices\n  * RSI\n  * MACD\n  * EMA\n  * SMA\n  * Bollinger Bands\n  * technical analysis\n  * crypto market trends\n  * trading analysis\n\nRules:\n\n* Always return exact API values only\n* Never hallucinate prices or indicators\n* Never invent unavailable data\n* If the API returns no data, clearly state:\n  \"No data was returned from the API.\"\n* Keep responses concise, analytical, and trading-focused\n* Use this tool before generating any technical analysis\n\nCrypto Symbol Mapping:\n\n* Bitcoin → BTC-USD.CC\n* Ethereum → ETH-USD.CC\n* Solana → SOL-USD.CC\n* XRP → XRP-USD.CC\n* Dogecoin → DOGE-USD.CC\n\nExamples:\nUser: \"Bitcoin price\"\n→ Fetch BTC-USD.CC real-time price\n\nUser: \"RSI of Ethereum\"\n→ Fetch RSI for ETH-USD.CC\n\nUser: \"MACD for Solana\"\n→ Fetch MACD for SOL-USD.CC\n",
+        "url": "=https://eodhd.com/api/fundamentals/BTC-USD.CC?api_token=demo&fmt=json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        1776,
+        -128
+      ],
+      "id": "23ba9fb9-3e08-47c3-b55c-2f638896bca3",
+      "name": "EODHD API"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "Stock has been added to watchlist ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2096,
+        -976
+      ],
+      "id": "13adb409-72a3-4e54-8d31-43235399d9a5",
+      "name": "Watchlist Confirmation Message",
+      "webhookId": "11c14a77-b82d-45da-aa63-0031f9f25675",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2096,
+        -400
+      ],
+      "id": "7427c18c-35ee-478b-8381-9810cfdc395d",
+      "name": "Output Message",
+      "webhookId": "8ea06d56-7530-4fd6-a6fc-913357769de3",
+      "credentials": {
+        "telegramApi": {
+          "id": "dDU1QTqlF5Oz7GEX",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 256,
+        "width": 192,
+        "color": "#1F4F8E"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        -864
+      ],
+      "id": "fb473f36-37e5-47fc-931e-469e00c6db87",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bd51bb69-2ed9-484b-90e9-a343489368fa",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "78767da9-45f3-493b-a266-a544a2e1494f",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "voice ",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f9165a42-91c9-485d-92fc-db69cd70d7e8",
+                    "leftValue": "={{ $json.message.photo[0].file_id }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -800,
+        -800
+      ],
+      "id": "84ee9ebe-e907-4606-876c-5b0ba2cbda6c",
+      "name": "Bifurcation of text , image , voice "
+    },
+    {
+      "parameters": {
+        "content": "Tools\n",
+        "height": 192,
+        "width": 992,
+        "color": "#355551"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -144
+      ],
+      "id": "33b9e0cb-4e10-4c59-aa3a-1b88959f069f",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Bifurcation of text , image , voice ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "news": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file1": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Output Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "CAMBAI REQ1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get a file3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file3": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file2": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Watchlist Confirmation Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "global quote1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CAMBAI REQ1": {
+      "main": [
+        [
+          {
+            "node": "CAMBAI REQ2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CAMBAI REQ2": {
+      "main": [
+        [
+          {
+            "node": "CAMBAI REQ3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CAMBAI REQ3": {
+      "main": [
+        []
+      ]
+    },
+    "Alpha Vantange technical api": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alpha Vantage global api": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert currency  Twelve Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get market movers  Twelve Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EODHD API": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Watchlist Confirmation Message": {
+      "main": [
+        []
+      ]
+    },
+    "Bifurcation of text , image , voice ": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "61b94e14-c972-4a0c-a540-8670ca8a007e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aebe7b6f83a8b446d474298836f5a02711b60f319da0bcc1b2b97dd0d5f4792f"
+  },
+  "id": "p2lcE2oQ26PeC3a8",
+  "tags": []
+}
